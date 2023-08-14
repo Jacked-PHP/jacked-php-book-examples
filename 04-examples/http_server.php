@@ -11,8 +11,8 @@ $server->on("start", function (Server $server) {
 });
 
 $server->on("request", function (Request $request, Response $response) {
-    echo "Incoming connection time: " . date('Y-m-d H:i:s') . "\n";
-    echo "Incoming connection uri: " . $request->server['request_uri'] . "\n";
+    echo "Incoming connection time: " . date('Y-m-d H:i:s') . PHP_EOL;
+    echo "Incoming connection uri: " . $request->server['request_uri'] . PHP_EOL;
     $response->header("Content-Type", "text/plain");
     $response->end("Here it all starts.\n");
 });

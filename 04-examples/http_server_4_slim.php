@@ -58,7 +58,7 @@ $server->set([
 ]);
 
 $server->on("start", function (Server $server) use ($server_address, $server_port) {
-    echo "HTTP server available at http://" . $server_address . ":" . $server_port . "\n";
+    echo "HTTP server available at http://" . $server_address . ":" . $server_port . PHP_EOL;
 });
 
 $server->on("request", function (Request $request, Response $response) use ($app, $requestConverter) {

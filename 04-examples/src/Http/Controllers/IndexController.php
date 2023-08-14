@@ -15,8 +15,8 @@ class IndexController
     {
         $serverParams = $this->getServerParams($request);
 
-        echo "Incoming connection time: " . date('Y-m-d H:i:s') . "\n";
-        echo "Incoming connection uri: " . $serverParams['request_uri'] ?? '' . "\n";
+        echo "Incoming connection time: " . date('Y-m-d H:i:s') . PHP_EOL;
+        echo "Incoming connection uri: " . $serverParams['request_uri'] ?? '' . PHP_EOL;
 
         $query = $request->getQueryParams();
 

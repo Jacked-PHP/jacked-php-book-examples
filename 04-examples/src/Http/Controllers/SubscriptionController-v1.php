@@ -15,8 +15,8 @@ class SubscriptionController
     {
         $serverParams = $this->getServerParams($request);
 
-        echo "Incoming connection time: " . date('Y-m-d H:i:s') . "\n";
-        echo "Incoming connection uri: " . $serverParams['REQUEST_URI'] ?? '' . "\n";
+        echo "Incoming connection time: " . date('Y-m-d H:i:s') . PHP_EOL;
+        echo "Incoming connection uri: " . $serverParams['REQUEST_URI'] ?? '' . PHP_EOL;
 
         $templates = new Engine(ROOT_DIR . '/html');
         $html_content = $templates->render('sample5', [
@@ -33,9 +33,9 @@ class SubscriptionController
 
         $data = $request->getParsedBody();
 
-        echo "Incoming connection time: " . date('Y-m-d H:i:s') . "\n";
-        echo "Incoming connection uri: " . $serverParams['REQUEST_URI'] ?? '' . "\n";
-        echo "Incoming connection data: " . json_encode($data) . "\n";
+        echo "Incoming connection time: " . date('Y-m-d H:i:s') . PHP_EOL;
+        echo "Incoming connection uri: " . $serverParams['REQUEST_URI'] ?? '' . PHP_EOL;
+        echo "Incoming connection data: " . json_encode($data) . PHP_EOL;
 
         $templates = new Engine(ROOT_DIR . '/html');
         $html_content = $templates->render('sample5-result', [

@@ -25,12 +25,12 @@ $server_port = isset($_ENV['SERVER_PORT']) ? $_ENV['SERVER_PORT'] : '9503';
 $server = new Server($server_address, $server_port);
 
 $server->on("start", function (Server $server) use ($server_address, $server_port) {
-    echo "HTTP server available at http://" . $server_address . ":" . $server_port . "\n";
+    echo "HTTP server available at http://" . $server_address . ":" . $server_port . PHP_EOL;
 });
 
 $server->on("request", function (Request $request, Response $response) {
-    echo "Incoming connection time: " . date('Y-m-d H:i:s') . "\n";
-    echo "Incoming connection uri: " . $request->server['request_uri'] . "\n";
+    echo "Incoming connection time: " . date('Y-m-d H:i:s') . PHP_EOL;
+    echo "Incoming connection uri: " . $request->server['request_uri'] . PHP_EOL;
 
     $custom_content = '';
     if (null !== $request->get && isset($request->get['content'])) {
