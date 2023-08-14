@@ -9,9 +9,11 @@
         "lotharthesavior/chocookies": "^0.0.3",
         "ramsey/uuid": "^4.3",
         "psr/simple-cache": "^3.0",
+        "openswoole/core": "^22.1",
+        "openswoole/ide-helper": "^22.0",
         "ext-json": "*",
-        "php": "^8",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "php": "^8"
     },
     "autoload": {
         "psr-4": {

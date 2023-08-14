@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Traits\HasServerParams;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use League\Plates\Engine;
 
 class SubscriptionController
 {
+    use HasServerParams;
+
     public function subscriptionForm(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $serverParams = $request->getServerParams();
+        $serverParams = $this->getServerParams($request);
 
         echo "Incoming connection time: " . date('Y-m-d H:i:s') . "\n";
         echo "Incoming connection uri: " . $serverParams['REQUEST_URI'] ?? '' . "\n";
@@ -26,7 +29,7 @@ class SubscriptionController
 
     public function subscribe(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $serverParams = $request->getServerParams();
+        $serverParams = $this->getServerParams($request);
 
         $data = $request->getParsedBody();
 

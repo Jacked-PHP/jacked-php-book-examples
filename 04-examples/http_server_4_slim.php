@@ -14,15 +14,14 @@ const ROOT_DIR = __DIR__;
 require __DIR__ . '/vendor/autoload.php';
 
 use App\Http\Controllers\IndexController;
-use App\Http\Controllers\SubscriptionController;
 use Dotenv\Dotenv;
 use Ilex\SwoolePsr7\SwooleResponseConverter;
 use Ilex\SwoolePsr7\SwooleServerRequestConverter;
 use Slim\App;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Swoole\HTTP\Server;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use OpenSwoole\HTTP\Server;
+use OpenSwoole\Http\Request;
+use OpenSwoole\Http\Response;
 
 // Load config.
 
@@ -43,8 +42,6 @@ $requestConverter = new SwooleServerRequestConverter(
 
 $app = new App($psr17Factory);
 $app->get('/', [IndexController::class, 'index']);
-$app->get('/subscription', [SubscriptionController::class, 'subscriptionForm']);
-$app->post('/subscription', [SubscriptionController::class, 'subscribe']);
 $app->addRoutingMiddleware();
 
 // Swoole part.

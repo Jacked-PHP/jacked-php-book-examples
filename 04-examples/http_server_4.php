@@ -8,6 +8,8 @@
  * - Ilex\SwoolePsr7 as PSR-7 adaptor.
  */
 
+const ROOT_DIR = __DIR__;
+
 require __DIR__ . '/vendor/autoload.php';
 
 use App\Http\Controllers\IndexController;

@@ -5,8 +5,8 @@
  * - Plates Template Engine.
  * - Dotenv for .env configurations.
  * - Slim\App for Http Handler (our PSR-15).
- * - Nyholm\Psr7 as PSR-17 HTTP Factory and PSR-7 implementation.
- * - Ilex\SwoolePsr7 as PSR-7 adaptor to OpenSwoole and PSR-17 HTTP Factory.
+ * - OpenSwoole\Core as PSR-7 adaptor.
+ * - Nyholm\Psr7 as PSR-17 HTTP Factory.
  */
 
 const ROOT_DIR = __DIR__;
@@ -14,37 +14,21 @@ const ROOT_DIR = __DIR__;
 require __DIR__ . '/vendor/autoload.php';
 
 use App\Http\Controllers\IndexController;
-use App\Http\Controllers\SubscriptionController;
 use Dotenv\Dotenv;
-use Ilex\SwoolePsr7\SwooleResponseConverter;
-use Ilex\SwoolePsr7\SwooleServerRequestConverter;
 use Slim\App;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Swoole\HTTP\Server;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use OpenSwoole\HTTP\Server;
+use Psr\Http\Message\ServerRequestInterface;
 
 // Load config.
 
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-// Section: Start Psr7 Converter.
-
-$psr17Factory = new Psr17Factory();
-$requestConverter = new SwooleServerRequestConverter(
-    $psr17Factory,
-    $psr17Factory,
-    $psr17Factory,
-    $psr17Factory
-);
-
 // Section: Start Request Handler (Slim).
 
-$app = new App($psr17Factory);
+$app = new App(new Psr17Factory());
 $app->get('/', [IndexController::class, 'index']);
-$app->get('/subscription', [SubscriptionController::class, 'subscriptionForm']);
-$app->post('/subscription', [SubscriptionController::class, 'subscribe']);
 $app->addRoutingMiddleware();
 
 // Swoole part.
@@ -64,12 +48,7 @@ $server->on("start", function (Server $server) use ($server_address, $server_por
     echo "HTTP server available at http://" . $server_address . ":" . $server_port . "\n";
 });
 
-$server->on("request", function (Request $request, Response $response) use ($app, $requestConverter) {
-    $psr7Request = $requestConverter->createFromSwoole($request);
-    $psr7Response = $app->handle($psr7Request);
-    $converter = new SwooleResponseConverter($response);
-    $converter->send($psr7Response);
-});
+$server->handle(fn (ServerRequestInterface $request) => $app->handle($request));
 
 $server->on('close', function ($server) {
     echo "Connection closed.\n";

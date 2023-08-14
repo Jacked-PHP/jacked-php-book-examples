@@ -1,5 +1,7 @@
 <?php
 
+const ROOT_DIR = __DIR__;
+
 use Swoole\Http\Server;
 use Swoole\Http\Request;
 use Swoole\Http\Response;

@@ -1,8 +1,8 @@
 <?php
 
-use Swoole\HTTP\Server;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use OpenSwoole\HTTP\Server;
+use OpenSwoole\Http\Request;
+use OpenSwoole\Http\Response;
 
 $server = new Server("127.0.0.1", 9503);
 

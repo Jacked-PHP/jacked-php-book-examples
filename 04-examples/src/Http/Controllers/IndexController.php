@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Traits\HasServerParams;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use League\Plates\Engine;
 
 class IndexController
 {
+    use HasServerParams;
+
     public function index(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $serverParams = $request->getServerParams();
-        
+        $serverParams = $this->getServerParams($request);
+
         echo "Incoming connection time: " . date('Y-m-d H:i:s') . "\n";
-        echo "Incoming connection uri: " . $serverParams['REQUEST_URI'] ?? '' . "\n";
+        echo "Incoming connection uri: " . $serverParams['request_uri'] ?? '' . "\n";
 
         $query = $request->getQueryParams();
 
