@@ -2,10 +2,10 @@
 
 const ROOT_DIR = __DIR__;
 
-use Swoole\Http\Server;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
-use Swoole\Server\Port;
+use OpenSwoole\Http\Server;
+use OpenSwoole\Http\Request;
+use OpenSwoole\Http\Response;
+use OpenSwoole\Server\Port;
 
 $server = new Server("0.0.0.0", 80);
 

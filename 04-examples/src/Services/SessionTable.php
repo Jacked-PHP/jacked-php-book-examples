@@ -5,7 +5,7 @@ namespace App\Services;
 use Carbon\Carbon;
 use DateInterval;
 use Psr\SimpleCache\CacheInterface;
-use Swoole\Table;
+use OpenSwoole\Table;
 
 class SessionTable implements CacheInterface
 {

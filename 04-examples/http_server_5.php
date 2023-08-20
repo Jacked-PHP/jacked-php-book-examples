@@ -20,9 +20,9 @@ use Ilex\SwoolePsr7\SwooleResponseConverter;
 use Ilex\SwoolePsr7\SwooleServerRequestConverter;
 use Slim\App;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Swoole\HTTP\Server;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use OpenSwoole\HTTP\Server;
+use OpenSwoole\Http\Request;
+use OpenSwoole\Http\Response;
 
 // Load config.
 
