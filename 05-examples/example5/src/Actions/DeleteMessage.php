@@ -12,14 +12,14 @@ class DeleteMessage extends AbstractAction
     {
         $this->server->message_table->del($data['message_id']);
 
-        $connections = $this->server->connection_list(0);
-
-        foreach ($connections as $fd) {
+        foreach ($this->server->connections as $fd) {
             $this->server->push($fd, json_encode([
                 'action' => $this->name,
                 'delete_message_id' => $data['message_id'],
             ]));
         }
+
+        return null;
     }
 
     public function validateData(array $data): void

@@ -126,7 +126,7 @@
                     };
 
                     app.ws.onmessage = function (evt) {
-                        console.log('Retrieved data from server: ' + evt.data);
+                        console.log('Received data from server: ' + evt.data);
                         app.handleIncomingMessage(evt.data);
                     };
 
@@ -190,7 +190,7 @@
 
                 createDeleteMessageButton: (data) => {
                     let button = document.createElement("a");
-                    
+
                     button.title = "Remove message";
                     button.innerHTML = "X";
                     Object.assign(button.style, {

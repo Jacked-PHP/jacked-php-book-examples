@@ -5,217 +5,217 @@
 </head>
 <body>
 
-    <div class="container">
+<div class="container">
 
-        <h1>WebSocket Client <span id="user_name"></span></h1>
+    <h1>WebSocket Client <span id="user_name"></span></h1>
 
-        <form id="message-form">
-            <div>
-                <textarea id="message-box"></textarea>
-            </div>
-            <div>
-                <input type="submit" />
-            </div>
-        </form>
+    <form id="message-form">
+        <div>
+            <textarea id="message-box"></textarea>
+        </div>
+        <div>
+            <input type="submit" />
+        </div>
+    </form>
 
-        <hr/>
+    <hr/>
 
-        <ul id="output"></ul>
+    <ul id="output"></ul>
 
-    </div>
+</div>
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
-        // string generator.
-        const num = 8;
-        const randomNameGenerator = num => {
-            let res = '';
-            for(let i = 0; i < num; i++){
-                const random = Math.floor(Math.random() * 27);
-                res += String.fromCharCode(97 + random);
-            };
-            return res;
+    // string generator.
+    const num = 8;
+    const randomNameGenerator = num => {
+        let res = '';
+        for(let i = 0; i < num; i++){
+            const random = Math.floor(Math.random() * 27);
+            res += String.fromCharCode(97 + random);
+        }
+        return res;
+    };
+
+    (function() {
+
+        /**
+         * App State.
+         */
+        var state = {
+            user_name: null,
         };
 
-        (function() {
+        /**
+         * App Events.
+         */
+        var events = {
+            SET_USER_NAME: 'set_user_name',
+        };
+
+        /**
+         * App Actions.
+         */
+        var actions = {
+            set_user_name: (name) => {
+                state.user_name = name;
+                document.dispatchEvent(new CustomEvent(events.SET_USER_NAME, {
+                    detail: {user_name: name},
+                }));
+            },
+        };
+
+        /**
+         * App Core.
+         */
+        var app = {
+            ws: null,
+
+            config: {
+                uri: 'ws://127.0.0.1',
+                port: 9501,
+            },
 
             /**
-             * App State.
+             *
              */
-            var state = {
-                user_name: null,
-            };
+            init: () => {
+                app.listenEvents();
+                app.connectToServer();
+            },
 
             /**
-             * App Events.
+             *
              */
-            var events = {
-                SET_USER_NAME: 'set_user_name',
-            };
+            listenEvents: () => {
+                document.getElementById('message-form').addEventListener('submit', app.handleFormSubmit, false);
+                document.addEventListener(events.SET_USER_NAME, app.setUserName, false)
+            },
 
             /**
-             * App Actions.
+             *
              */
-            var actions = {
-                set_user_name: (name) => {
-                    state.user_name = name;
-                    document.dispatchEvent(new CustomEvent(events.SET_USER_NAME, {
-                        detail: {user_name: name},
-                    }));
-                },
-            };
+            connectToServer: () => {
+                let name = prompt('Who are you?', randomNameGenerator(num));
+                actions.set_user_name(name);
 
-            /**
-             * App Core.
-             */
-            var app = {
-                ws: null,
-
-                config: {
-                    uri: 'ws://127.0.0.1',
-                    port: 9501,
-                },
-
-                /**
-                 *
-                 */
-                init: () => {
-                    app.listenEvents();
-                    app.connectToServer();
-                },
-
-                /**
-                 *
-                 */
-                listenEvents: () => {
-                    document.getElementById('message-form').addEventListener('submit', app.handleFormSubmit, false);
-                    document.addEventListener(events.SET_USER_NAME, app.setUserName, false)
-                },
-
-                /**
-                 *
-                 */
-                connectToServer: () => {
-                    let name = prompt('Who are you?', randomNameGenerator(num));
-                    actions.set_user_name(name);
-
-                    if (app.ws !== null) {
-                        if (!confirm('There is an active connection, do you wish to close it?')) {
-                            return;
-                        } else {
-                            app.ws.close();
-                            app.ws = null;
-                        }
-                    }
-
-                    var wsServer = app.config.uri
-                        + ':'
-                        + app.config.port
-                        + '/?name='
-                        + state.user_name;
-                    app.ws = new WebSocket(wsServer);
-
-                    app.ws.onopen = function (evt) {
-                        console.log("Connected to WebSocket server.");
-                    };
-
-                    app.ws.onclose = function (evt) {
-                        console.log("Disconnected");
+                if (app.ws !== null) {
+                    if (!confirm('There is an active connection, do you wish to close it?')) {
+                        return;
+                    } else {
+                        app.ws.close();
                         app.ws = null;
-                        console.log(evt.reason);
-                    };
-
-                    app.ws.onmessage = function (evt) {
-                        console.log('Retrieved data from server: ' + evt.data);
-                        app.handleIncomingMessage(evt.data);
-                    };
-
-                    app.ws.onerror = function (evt, e) {
-                        console.log('Error occured: ' + evt.data);
-                    };
-                },
-
-                /**
-                 * @param {Event} e
-                 */
-                handleFormSubmit: (e) => {
-                    e.preventDefault();
-                    app.ws.send(JSON.stringify({
-                        action: 'add-message',
-                        message: document.getElementById('message-box').value
-                    }));
-                },
-
-                removeMessage: (messageId) => {
-                    app.ws.send(JSON.stringify({
-                        action: 'delete-message',
-                        message_id: messageId
-                    }));
-                },
-
-                /**
-                 * @param {String} data
-                 */
-                handleIncomingMessage: (data) => {
-                    const parsedData = JSON.parse(data);
-
-                    switch (parsedData.action) {
-
-                        case "add-message":
-                            let messageItem = app.createMessageItem(parsedData);
-                            messageItem.appendChild(app.createDeleteMessageButton(parsedData));
-                            document.getElementById('output').appendChild(messageItem);
-                            break;
-
-                        case "delete-message":
-                            document.getElementById("message-" + parsedData.delete_message_id).remove();
-                            break;
-
-                        default:
-                            console.log("Not recognized message received: " . data);
-                            break;
                     }
-                },
+                }
 
-                createMessageItem: (data) => {
-                    let input = document.createElement("li");
-                    input.id = "message-" + data.id;
-                    input.innerHTML = data.message;
-                    return input;
-                },
+                var wsServer = app.config.uri
+                    + ':'
+                    + app.config.port
+                    + '/?name='
+                    + state.user_name;
+                app.ws = new WebSocket(wsServer);
 
-                createDeleteMessageButton: (data) => {
-                    let button = document.createElement("a");
-                    
-                    button.title = "Remove message";
-                    button.innerHTML = "X";
-                    Object.assign(button.style, {
-                        marginLeft: "10px",
-                        color: "red",
-                        fontWeight: "bold",
-                        fontFamily: "Sans-Serif"
-                    });
+                app.ws.onopen = function (evt) {
+                    console.log("Connected to WebSocket server.");
+                };
 
-                    button.onclick = (e) => {
-                        app.removeMessage(data.id);
-                    };
+                app.ws.onclose = function (evt) {
+                    console.log("Disconnected");
+                    app.ws = null;
+                    console.log(evt.reason);
+                };
 
-                    return button;
-                },
+                app.ws.onmessage = function (evt) {
+                    console.log('Retrieved data from server: ' + evt.data);
+                    app.handleIncomingMessage(evt.data);
+                };
+
+                app.ws.onerror = function (evt, e) {
+                    console.log('Error occured: ' + evt.data);
+                };
+            },
+
+            /**
+             * @param {Event} e
+             */
+            handleFormSubmit: (e) => {
+                e.preventDefault();
+                app.ws.send(JSON.stringify({
+                    action: 'add-message',
+                    message: document.getElementById('message-box').value
+                }));
+            },
+
+            removeMessage: (messageId) => {
+                app.ws.send(JSON.stringify({
+                    action: 'delete-message',
+                    message_id: messageId
+                }));
+            },
+
+            /**
+             * @param {String} data
+             */
+            handleIncomingMessage: (data) => {
+                const parsedData = JSON.parse(data);
+
+                switch (parsedData.action) {
+
+                    case "add-message":
+                        let messageItem = app.createMessageItem(parsedData);
+                        messageItem.appendChild(app.createDeleteMessageButton(parsedData));
+                        document.getElementById('output').appendChild(messageItem);
+                        break;
+
+                    case "delete-message":
+                        document.getElementById("message-" + parsedData.delete_message_id).remove();
+                        break;
+
+                    default:
+                        console.log("Not recognized message received: " . data);
+                        break;
+                }
+            },
+
+            createMessageItem: (data) => {
+                let input = document.createElement("li");
+                input.id = "message-" + data.id;
+                input.innerHTML = data.message;
+                return input;
+            },
+
+            createDeleteMessageButton: (data) => {
+                let button = document.createElement("a");
+
+                button.title = "Remove message";
+                button.innerHTML = "X";
+                Object.assign(button.style, {
+                    marginLeft: "10px",
+                    color: "red",
+                    fontWeight: "bold",
+                    fontFamily: "Sans-Serif"
+                });
+
+                button.onclick = (e) => {
+                    app.removeMessage(data.id);
+                };
+
+                return button;
+            },
 
 
-                /**
-                 * @param {Event} event
-                 */
-                setUserName: (event) => {
-                    document.getElementById('user_name').innerText = '- ' + event.detail.user_name;
-                },
-            };
+            /**
+             * @param {Event} event
+             */
+            setUserName: (event) => {
+                document.getElementById('user_name').innerText = '- ' + event.detail.user_name;
+            },
+        };
 
-            app.init();
-        })();
+        app.init();
+    })();
 
-    </script>
+</script>
 
 </body>
 </html>

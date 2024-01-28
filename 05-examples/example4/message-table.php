@@ -1,6 +1,6 @@
 <?php
 
-use Swoole\Table;
+use OpenSwoole\Table;
 
 return function(): Table {
     $table = new Table(1024, 1);

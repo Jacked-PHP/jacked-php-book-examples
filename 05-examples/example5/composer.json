@@ -1,6 +1,7 @@
 {
     "require": {
-        "kanata-php/socket-conveyor": "^1.1"
+        "kanata-php/socket-conveyor": "^2.0",
+        "openswoole/ide-helper": "~22.0.1"
     },
     "autoload": {
         "psr-4": {

@@ -1,9 +1,11 @@
 <?php
 
-use Conveyor\SocketHandlers\Interfaces\SocketHandlerInterface;
-use Swoole\Websocket\Server;
-use Swoole\Http\Request;
-use Swoole\WebSocket\Frame;
+use App\Actions\AddMessage;
+use App\Actions\DeleteMessage;
+use Conveyor\Conveyor;
+use OpenSwoole\Websocket\Server;
+use OpenSwoole\Http\Request;
+use OpenSwoole\WebSocket\Frame;
 
 require __DIR__ . '/vendor/autoload.php';
 
@@ -32,9 +34,15 @@ $server->on('message', function(Server $server, Frame $frame) {
 
     echo 'Received message (' . $user_name . '): ' . $frame->data . PHP_EOL;
 
-    /** @var SocketHandlerInterface $socket_router */
-    $socket_router = (require_once __DIR__ . '/src/socket-router.php')();
-    $socket_router->handle($frame->data, $frame->fd, $server);
+    Conveyor::init()
+        ->server($server)
+        ->fd($frame->fd)
+        ->persistence()
+        ->addActions([
+            new AddMessage,
+            new DeleteMessage,
+        ])
+        ->run($frame->data);
 });
 
 $server->on('close', function(Server $server, $fd) {

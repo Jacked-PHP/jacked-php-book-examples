@@ -19,9 +19,7 @@ class AddMessage extends AbstractAction
             'message' => $data['message'],
         ]);
 
-        $connections = $this->server->connection_list(0);
-
-        foreach ($connections as $fd) {
+        foreach ($this->server->connections as $fd) {
             if ($this->fd === $fd) {
                 $message = json_encode([
                     'id' => $next_id,
@@ -32,11 +30,13 @@ class AddMessage extends AbstractAction
                 $message = json_encode([
                     'id' => $next_id,
                     'action' => $this->name,
-                    'message' => $user_name . '\'s message: ' . $data['message'], 
+                    'message' => $user_name . '\'s message: ' . $data['message'],
                 ]);
             }
             $this->server->push($fd, $message);
         }
+
+        return null;
     }
 
     public function validateData(array $data): void

@@ -26,17 +26,6 @@
 
     <script type="text/javascript">
 
-        // string generator.
-        const num = 8;
-        const randomNameGenerator = num => {
-            let res = '';
-            for(let i = 0; i < num; i++){
-                const random = Math.floor(Math.random() * 27);
-                res += String.fromCharCode(97 + random);
-            };
-            return res;
-        };
-
         (function() {
 
             /**
@@ -51,18 +40,6 @@
              */
             var events = {
                 SET_USER_NAME: 'set_user_name',
-            };
-
-            /**
-             * App Actions.
-             */
-            var actions = {
-                set_user_name: (name) => {
-                    state.user_name = name;
-                    document.dispatchEvent(new CustomEvent(events.SET_USER_NAME, {
-                        detail: {user_name: name},
-                    }));
-                },
             };
 
             /**
@@ -96,9 +73,6 @@
                  *
                  */
                 connectToServer: () => {
-                    let name = prompt('Who are you?', randomNameGenerator(num));
-                    actions.set_user_name(name);
-
                     if (app.ws !== null) {
                         if (!confirm('There is an active connection, do you wish to close it?')) {
                             return;
@@ -111,8 +85,7 @@
                     var wsServer = app.config.uri
                         + ':'
                         + app.config.port
-                        + '/?name='
-                        + state.user_name;
+                        + '/?token={{user-token}}';
                     app.ws = new WebSocket(wsServer);
 
                     app.ws.onopen = function (evt) {
@@ -126,11 +99,11 @@
                     };
 
                     app.ws.onmessage = function (evt) {
-                        console.log('Retrieved data from server: ' + evt.data);
+                        console.log('Received data from server: ' + evt.data);
                         app.handleIncomingMessage(evt.data);
                     };
 
-                    app.ws.onerror = function (evt, e) {
+                    app.ws.onerror = function (evt) {
                         console.log('Error occured: ' + evt.data);
                     };
                 },
@@ -175,6 +148,14 @@
                             alert(parsedData['message']);
                             break;
 
+                        case "set_user_name":
+                            document.dispatchEvent(new CustomEvent(events.SET_USER_NAME, {
+                                detail: {
+                                    user_name: parsedData.user_name
+                                }
+                            }));
+                            break;
+
                         default:
                             console.log("Not recognized message received: " . data);
                             break;
@@ -190,7 +171,7 @@
 
                 createDeleteMessageButton: (data) => {
                     let button = document.createElement("a");
-                    
+
                     button.title = "Remove message";
                     button.innerHTML = "X";
                     Object.assign(button.style, {
