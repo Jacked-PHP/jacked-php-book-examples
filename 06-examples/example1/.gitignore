@@ -6,4 +6,4 @@ output2.log
 supervisord.pid
 supervisord.log
 ws-server-pid
-
+vendor

@@ -1,6 +1,6 @@
 {
-    "name": "lotharthsavior/dojo-sockets",
     "require": {
-        "league/plates": "^3.4"
+        "openswoole/ide-helper": "~22.0.1",
+        "openswoole/core": "^22.1"
     }
 }

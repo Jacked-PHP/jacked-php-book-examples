@@ -1,7 +1,7 @@
 <?php
 
-use Swoole\Coroutine;
-use Swoole\Coroutine\Channel;
+use OpenSwoole\Coroutine as Co;
+use OpenSwoole\Coroutine\Channel;
 
 $chan = new Channel(1);
 
@@ -11,11 +11,10 @@ function get_users(): array
     return json_decode($raw_data, true);
 }
 
-Co\run(function () use ($chan) {
+Co::run(function () use ($chan) {
 
     // Coroutine producing data.
     go(function () use ($chan) {
-        $cid = Coroutine::getuid();
         $i = 0;
         while (1) {
             system('clear');

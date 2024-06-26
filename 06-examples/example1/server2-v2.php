@@ -1,45 +1,58 @@
 <?php
 
-use Swoole\Http\Server;
-use Swoole\Http\Response;
-use Swoole\Http\Request;
-use Swoole\Coroutine\WaitGroup;
+include __DIR__ . '/vendor/autoload.php';
 
-Swoole\Runtime::enableCoroutine(SWOOLE_HOOK_NATIVE_CURL);
+use OpenSwoole\Core\Coroutine\WaitGroup;
+use OpenSwoole\Http\Server;
+use OpenSwoole\Http\Response;
+use OpenSwoole\Http\Request;
+use OpenSwoole\Runtime;
+use OpenSwoole\Coroutine as Co;
 
-$server = new Server("0.0.0.0", 8181, SWOOLE_PROCESS);
+Co::set(['hook_flags' => Runtime::HOOK_NATIVE_CURL]);
 
-$server->on("start", function($server) {
+$server = new Server('0.0.0.0', 8181, Server::POOL_MODE);
+
+$server->set([
+    'enable_coroutine' => true,
+    'max_coroutine' => 3000,
+]);
+
+$server->on('start', function (Server $server) {
     $pid_file = __DIR__ . '/http-server-pid2';
     if (file_exists($pid_file)) {
         unlink($pid_file);
     }
     file_put_contents($pid_file, $server->master_pid);
-    echo 'Server started with PID: ' . $server->master_pid . " at http://127.0.0.1:8181\n";
+    echo 'Server started with PID: ' . $server->master_pid . ' at http://127.0.0.1:' . $server->port . PHP_EOL;
 });
 
-function curl_request(string $url): array {
+function curl_request(string $url): array
+{
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     $data = curl_exec($ch);
     curl_close($ch);
-	return json_decode($data, true);
+    return json_decode($data, true);
 }
 
-function get_users(): array {
+function get_users(): array
+{
     return curl_request("localhost:8080");
 }
 
-function get_users_posts(string $email): array {
+function get_users_posts(string $email): array
+{
     return curl_request("localhost:8080?user=1");
 }
 
-function get_posts_comments(int $post_id): array {
+function get_posts_comments(int $post_id): array
+{
     return curl_request("localhost:8080?post_id=" . $post_id);
 }
 
-$server->on('request', function(Request $request, Response $response) {
+$server->on('request', function (Request $request, Response $response) {
     $wg = new WaitGroup();
 
     $start = microtime(true);
@@ -47,14 +60,14 @@ $server->on('request', function(Request $request, Response $response) {
     $users = get_users(); // ~1 sec
 
     foreach ($users as $key => $user) {
-        go(function() use (&$users, $user, $key, $wg) {
+        go(function () use (&$users, $user, $key, $wg, $start) {
             $wg->add();
             $posts = get_users_posts($user['email']); // ~1 sec
 
             $wg2 = new WaitGroup();
 
             foreach ($posts as $post_id => $post) {
-                go(function() use (&$posts, $post_id, $wg2) {
+                go(function () use (&$posts, $post_id, $wg2) {
                     $wg2->add();
                     $comments = get_posts_comments($post_id); // ~1 sec
                     $posts[$post_id]['comments'] = $comments;
@@ -73,7 +86,7 @@ $server->on('request', function(Request $request, Response $response) {
 
     $end = microtime(true);
 
-    echo 'Execution Time: ' . ($end - $start) . "\n";
+    echo 'Execution Time: ' . ($end - $start) . PHP_EOL;
 
     $response->end(json_encode($users));
 });
