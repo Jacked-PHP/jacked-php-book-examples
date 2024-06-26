@@ -28,5 +28,7 @@ class IndexController
 
         $response->getBody()->write($html_content);
         return $response->withStatus(200);
+
+
     }
 }
