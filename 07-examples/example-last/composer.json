@@ -1,0 +1,15 @@
+{
+    "require": {
+        "openswoole/ide-helper": "^22.1",
+        "vlucas/phpdotenv": "^5.6",
+        "league/plates": "^3.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "ServerManager\\": "src/"
+        }
+    },
+    "require-dev": {
+        "lotharthesavior/hot-reactor": "^0.0.4"
+    }
+}

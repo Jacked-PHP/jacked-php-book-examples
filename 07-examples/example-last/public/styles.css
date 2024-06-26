@@ -1,0 +1,77 @@
+#container {
+    width: 100%;
+    max-width: 250px;
+    margin: 0 auto;
+}
+
+#id:before {
+    content: "Connection id: ";
+}
+
+#data {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+#data.active {
+    background-color: #8dcb74;
+}
+
+#data.loading {
+    background-color: #ecd685;
+}
+
+#data.inactive {
+    background-color: #d3264e;
+}
+
+#buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 15px;
+    margin-bottom: 15px;
+}
+
+#buttons #action-stop-server,
+#buttons #action-start-server {
+    cursor: pointer;
+    padding: 10px;
+}
+
+#buttons #action-stop-server[disabled],
+#buttons #action-start-server[disabled] {
+    cursor: not-allowed;
+}
+
+#buttons #action-stop-server {
+    border: 1px solid #000;
+}
+
+#buttons #action-start-server {
+    border: 1px solid #000;
+}
+
+#website-link {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    color: #000;
+    font-size: 16px;
+}
+
+#website-link a {
+    color: #000000;
+    text-decoration: none;
+}
+
+#website-link a:hover {
+    text-decoration: underline;
+}
+
+#settings.row {
+    display: flex;
+    align-items: center;
+}
