@@ -1,14 +1,5 @@
 <?php
 
-/**
- * This examples has:
- * - Plates Template Engine.
- * - Dotenv for .env configurations.
- * - Slim\App for Http Handler (our PSR-15).
- * - Nyholm\Psr7 as PSR-17 HTTP Factory and PSR-7 implementation.
- * - Ilex\SwoolePsr7 as PSR-7 adaptor to OpenSwoole and PSR-17 HTTP Factory.
- */
-
 const ROOT_DIR = __DIR__;
 
 require __DIR__ . '/vendor/autoload.php';

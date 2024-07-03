@@ -1,13 +1,5 @@
 <?php
 
-/**
- * This examples has:
- * - Plates Template Engine.
- * - Dotenv for .env configurations.
- * - Slim\App for Http Handler.
- * - Ilex\SwoolePsr7 as PSR-7 adaptor.
- */
-
 const ROOT_DIR = __DIR__;
 
 require __DIR__ . '/vendor/autoload.php';
@@ -21,9 +13,9 @@ use Ilex\SwoolePsr7\SwooleServerRequestConverter;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
-use Swoole\HTTP\Server;
+use OpenSwoole\Http\Request;
+use OpenSwoole\Http\Response;
+use OpenSwoole\HTTP\Server;
 
 // Load config.
 

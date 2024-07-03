@@ -1,18 +1,10 @@
 <?php
 
-/**
- * This examples has:
- * - Plates Template Engine.
- * - Dotenv for .env configurations.
- */
-
-const ROOT_DIR = __DIR__;
-
 require __DIR__ . '/vendor/autoload.php';
 
-use Swoole\HTTP\Server;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use OpenSwoole\HTTP\Server;
+use OpenSwoole\Http\Request;
+use OpenSwoole\Http\Response;
 use League\Plates\Engine;
 use Dotenv\Dotenv;
 

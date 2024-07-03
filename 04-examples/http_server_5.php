@@ -1,14 +1,5 @@
 <?php
 
-/**
- * This examples has:
- * - Plates Template Engine.
- * - Dotenv for .env configurations.
- * - Slim\App for Http Handler (our PSR-15).
- * - Nyholm\Psr7 as PSR-17 HTTP Factory and PSR-7 implementation.
- * - Ilex\SwoolePsr7 as PSR-7 adaptor to OpenSwoole and PSR-17 HTTP Factory.
- */
-
 const ROOT_DIR = __DIR__;
 
 require __DIR__ . '/vendor/autoload.php';
@@ -29,7 +20,7 @@ use OpenSwoole\Http\Response;
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-// Section: Start Psr7 Converter.
+// Start Psr7 Converter.
 
 $psr17Factory = new Psr17Factory();
 $requestConverter = new SwooleServerRequestConverter(
@@ -39,7 +30,7 @@ $requestConverter = new SwooleServerRequestConverter(
     $psr17Factory
 );
 
-// Section: Start Request Handler (Slim).
+// Start Request Handler (Slim).
 
 $app = new App($psr17Factory);
 $app->get('/', [IndexController::class, 'index']);
@@ -49,8 +40,8 @@ $app->addRoutingMiddleware();
 
 // Swoole part.
 
-$server_address = isset($_ENV['SERVER_ADDRESS']) ? $_ENV['SERVER_ADDRESS'] : '127.0.0.1';
-$server_port = isset($_ENV['SERVER_PORT']) ? $_ENV['SERVER_PORT'] : '9503';
+$server_address = $_ENV['SERVER_ADDRESS'] ?? '127.0.0.1';
+$server_port = $_ENV['SERVER_PORT'] ?? '9503';
 
 $server = new Server($server_address, $server_port);
 

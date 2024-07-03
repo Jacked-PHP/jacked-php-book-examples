@@ -1,7 +1,6 @@
 <?php
 
-const ROOT_DIR = __DIR__;
-
+use OpenSwoole\Constant;
 use OpenSwoole\Http\Server;
 use OpenSwoole\Http\Request;
 use OpenSwoole\Http\Response;
@@ -10,7 +9,7 @@ use OpenSwoole\Server\Port;
 $server = new Server("0.0.0.0", 80);
 
 /** @var Port $sslPort */
-$sslPort = $server->listen("0.0.0.0", 443, SWOOLE_SOCK_TCP | SWOOLE_SSL);
+$sslPort = $server->listen("0.0.0.0", 443, Constant::SOCK_TCP | Constant::SSL);
 
 $sslPort->set([
     'ssl_cert_file' => __DIR__ . '/certs/local.swooleexample.com.pem',
