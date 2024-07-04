@@ -51,8 +51,8 @@ $app->addRoutingMiddleware();
 
 // Swoole part.
 
-$server_address = isset($_ENV['SERVER_ADDRESS']) ? $_ENV['SERVER_ADDRESS'] : '127.0.0.1';
-$server_port = isset($_ENV['SERVER_PORT']) ? $_ENV['SERVER_PORT'] : '9503';
+$server_address = $_ENV['SERVER_ADDRESS'] ?? '127.0.0.1';
+$server_port = $_ENV['SERVER_PORT'] ?? '9503';
 
 $server = new Server($server_address, $server_port);
 
