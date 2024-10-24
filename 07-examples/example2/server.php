@@ -1,40 +1,37 @@
+#!/usr/bin/php
+
 <?php
 
-/**
- * This server consumes the data from the other server.
- *
- * This server process data requested asynchronously and present it.
- */
-
-use OpenSwoole\Http\Server;
+use OpenSwoole\HTTP\Server;
 use OpenSwoole\Http\Request;
 use OpenSwoole\Http\Response;
+use OpenSwoole\Coroutine\System;
+use OpenSwoole\Coroutine as Co;
+use OpenSwoole\Util;
 
-$server = new Server('0.0.0.0', 8080);
+include_once __DIR__ . '/constants.php';
 
+Util::setProcessName(HTTP_PROCESS_NAME);
+
+$port = 8181;
+
+$server = new Server('0.0.0.0', $port);
 $server->set([
     'worker_num' => 1,
-    'task_worker_num' => 2,
 ]);
-
-$server->on('Request', function (Request $request, Response $response) use ($server) {
-    $tasks[0] = ['filter' => 'name'];
-    $tasks[1] = ['filter' => 'email'];
-
-    $result = $server->taskCo($tasks, 1.5);
-
-    $response->end('<pre>' . var_export($result, true) . '</pre>');
+$server->on('start', function (Server $server) use ($port) {
+    echo 'OpenSwoole http server is started at http://127.0.0.1:' . $port . PHP_EOL;
 });
-
-$server->on('Task', function (Server $server, int $task_id, int $worker_id, array $data) {
-    $payload = file_get_contents('http://127.0.0.1:8181?filter=' . $data['filter']);
-
-    $data['payload'] = $payload;
-    $data['finished_at'] = time();
-    $data['worker_id'] = $server->worker_id;
-
-    return $data;
+$server->on('shutdown', function (Server $server) {
+    echo 'OpenSwoole http server is shutting down.' . PHP_EOL;
 });
-
-echo 'OpenSwoole http server is started at http://0.0.0.0:8080' . PHP_EOL;
+$server->on('request', function (Request $request, Response $response) {
+    $response->header('Content-Type', 'text/plain');
+    $response->end('Hello World' . PHP_EOL);
+});
 $server->start();
+
+// Listening for the kill signal.
+Co::run(function () {
+    System::waitSignal(SIGKILL, -1);
+});
