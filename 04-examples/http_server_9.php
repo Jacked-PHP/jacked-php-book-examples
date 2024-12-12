@@ -62,7 +62,7 @@ HTML;
     $response->header('Connection', 'keep-alive');
 
     // write a Socrates quote
-    $text = "Hello, I'm a server-sent event: 'The only true wisdom is in knowing you know nothing.' - Socrates\n\n";
+    $text = "Hello, I'm a server-sent event: 'The only true wisdom is in knowing you know nothing.' - Socrates END";
 
     $words = explode(' ', $text);
 
